@@ -1,0 +1,34 @@
+{% if bastion.enabled %}
+locals {
+  hub_vnet = values(module.alz.azurerm_virtual_network.connectivity)[0]
+  connectivity_rg_name = values(module.alz.azurerm_resource_group.connectivity)[0].name
+  bastion_host_name = "${var.root_id}-bastion-${var.primary_location}"
+  bastion_pip_name = "${var.root_id}-bastion-pip-${var.primary_location}"
+}
+
+data "azurerm_subnet" "bastion" {
+  name                 = var.bastion_subnet_name
+  virtual_network_name = local.hub_vnet.name
+  resource_group_name  = local.connectivity_rg_name
+  depends_on = [module.alz]
+}
+
+resource "azurerm_public_ip" "bastion" {
+  name                = local.bastion_pip_name
+  resource_group_name = local.connectivity_rg_name
+  location            = var.primary_location
+  allocation_method   = "Static"
+  sku                 = var.bastion_public_ip_sku
+}
+
+resource "azurerm_bastion_host" "hub" {
+  name                = local.bastion_host_name
+  resource_group_name = local.connectivity_rg_name
+  location            = var.primary_location
+  ip_configuration {
+    name                 = "bastion-ip-config"
+    subnet_id            = data.azurerm_subnet.bastion.id
+    public_ip_address_id = azurerm_public_ip.bastion.id
+  }
+}
+{% endif %}

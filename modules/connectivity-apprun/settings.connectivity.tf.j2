@@ -1,0 +1,56 @@
+# Generated from operator-owned TF_VAR_* values. Do not edit generated .tf files.
+locals {
+  configure_connectivity_resources = {
+    settings = {
+      hub_networks = [
+        {
+          config = {
+            name                           = "{{ domain }}"
+            address_space                  = ["{{ hub.cidr_block }}"]
+            location                       = var.primary_location
+            link_to_ddos_protection_plan   = var.enable_ddos_protection
+            enable_hub_network_mesh_peering = true
+            subnets = [
+              {% for key in ['azure_gateway_subnet', 'azure_bastion_subnet', 'shared_services_subnet'] %}
+              {
+                name = "{{ hub[key].name }}"
+                address_prefixes = ["{{ hub[key].ip_range }}"]
+              },
+              {% endfor %}
+            ]
+            {% if firewall.enabled %}
+            azure_firewall = {
+              enabled = true
+              config = {
+                address_prefix            = "{{ hub.azure_firewall_subnet.ip_range }}"
+                address_management_prefix = "{{ hub.azure_firewall_management_subnet.ip_range }}"
+                enable_dns_proxy          = true
+                dns_servers               = []
+                sku_tier                  = "Basic"
+                base_policy_id            = ""
+                private_ip_ranges         = []
+                threat_intelligence_mode  = ""
+                threat_intelligence_allowlist = {}
+                availability_zones = { zone_1 = true, zone_2 = true, zone_3 = true }
+              }
+            }
+            {% endif %}
+          }
+        }
+      ]
+      vwan_hub_networks = []
+      ddos_protection_plan = {
+        enabled = var.enable_ddos_protection
+      }
+      dns = {
+        enabled = false
+        config = {
+          location = null
+          enable_private_link_by_service = {}
+        }
+      }
+    }
+    location = var.primary_location
+    tags     = var.connectivity_resources_tags
+  }
+}

@@ -10,3 +10,23 @@ crash.log
 *.key
 .env
 .env.*
+
+# Generated from templates, not tracked in Git
+modules/connectivity-*/settings.connectivity.tf
+modules/connectivity-*/settings.bastion.tf
+
+# Operator-only environment configuration
+env/azure-alz.env
+env/*.local
+
+# Terraform local state
+.local-state/
+*.tfstate
+*.tfstate.*
+
+# Terraform working directories
+**/.terraform/
+
+# Terraform plan files
+*.tfplan
+*.tfplan.*
