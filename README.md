@@ -1,10 +1,10 @@
 # Azure Enterprise Landing Zone
 
-> **Architecture-first Terraform project** · Design phase · No infrastructure deployed
+> **Architecture-first Terraform project** · Platform implementation in progress · No infrastructure deployed
 
 An independently designed, modular Azure Landing Zone platform for governance, centralized operations, segmented networking, and repeatable application subscription onboarding.
 
-The repository starts with a documented target architecture. Terraform implementation will be added in a separate phase after design and permission checks.
+This repository contains the target architecture and a first platform implementation increment. It is not yet deployable: custom governance policies and complete networking templates are pending review. No Azure resources have been created.
 
 ## Architecture at a glance
 
@@ -74,14 +74,15 @@ Empty implementation directories contain `.gitkeep` files to reserve the module 
 
 | Area | Target design | Implementation |
 |---|---|---|
-| Management Groups, Azure Policy and RBAC | Specified | Not started |
-| Central monitoring and security | Specified | Not started |
-| XP / AppBuild / AppRun hub networks | Specified | Not started |
+| Management Groups, Azure Policy and RBAC | Specified | Core wrapper present; custom policy library pending |
+| Central monitoring and security | Specified | Management wrapper present; diagnostics pending |
+| XP / AppBuild / AppRun hub networks | Specified | ALZ wrappers/templates present; generator & rules pending |
 | Subscription onboarding and spoke networking | Specified | Not started |
 | Terraform state and deployment process | Boundary specified | Pending selection |
 
 ## Documentation
 
+- [Platform implementation status and limitations](docs/implementation-status.md)
 - [Architecture and module interfaces](docs/architecture.md)
 - [Network and connectivity design](docs/network-design.md)
 - [Implementation and validation sequence](docs/implementation-plan.md)
@@ -102,3 +103,5 @@ All credentials and environment variables are provided externally by the operato
 - [Terraform modules](https://developer.hashicorp.com/terraform/language/modules)
 - [Terraform state](https://developer.hashicorp.com/terraform/language/state)
 - [Azure Landing Zone Vending module](https://github.com/Azure/terraform-azurerm-lz-vending)
+
+> **Compatibility note:** This project deliberately pins the legacy archived CAF Enterprise Scale module `6.2.1` to maintain its module topology. See `docs/implementation-status.md`. Do not run `terraform apply` while dependencies/templates are incomplete.

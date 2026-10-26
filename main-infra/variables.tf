@@ -1,0 +1,12 @@
+variable "root_id" { type = string }
+variable "root_name" { type = string }
+variable "primary_location" { type = string }
+variable "secondary_location" { type = string }
+variable "subscription_id_connectivity" { type = string }
+variable "subscription_id_identity" { type = string }
+variable "subscription_id_management" { type = string }
+variable "email_security_contact" { type = string }
+variable "log_retention_in_days" { type = number }
+variable "enable_ddos_protection" { type = bool }
+variable "connectivity_resources_tags" { type = map(string) }
+variable "management_resources_tags" { type = map(string) }
