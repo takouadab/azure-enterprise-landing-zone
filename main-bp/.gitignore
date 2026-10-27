@@ -1,0 +1,13 @@
+# Jinja2-rendered Terraform. Keep the templates under version control.
+/providers-xp.tf
+/providers-appbuild.tf
+/providers-apprun.tf
+/projects-xp.tf
+/projects-appbuild.tf
+/projects-apprun.tf
+
+# Defense in depth when a local backend is accidentally reconfigured.
+*.tfstate
+*.tfstate.*
+*.tfplan
+.terraform/
