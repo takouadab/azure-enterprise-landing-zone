@@ -1,0 +1,14 @@
+# Generated from providers-apprun.tf.j2. Do not edit.
+{% for subscription in subscriptions if subscription.status == 'active' %}
+provider "azurerm" {
+  alias                           = "apprun_{{ subscription.alias_name }}"
+  features {}
+  subscription_id                 = {{ subscription.id | tojson }}
+  resource_provider_registrations = "none"
+}
+
+provider "azapi" {
+  alias           = "apprun_{{ subscription.alias_name }}"
+  subscription_id = {{ subscription.id | tojson }}
+}
+{% endfor %}

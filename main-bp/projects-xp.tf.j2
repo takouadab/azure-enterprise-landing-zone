@@ -1,0 +1,52 @@
+# Generated from projects-xp.tf.j2. Do not edit.
+{% for subscription in subscriptions if subscription.status == 'active' %}
+module "xp_{{ subscription.alias_name }}" {
+  source  = "Azure/lz-vending/azurerm"
+  version = "5.1.2"
+
+  providers = {
+    azapi   = azapi.xp_{{ subscription.alias_name }}
+  }
+
+  location          = var.primary_location
+  disable_telemetry = true
+
+  # Onboard an existing application subscription; do not create a new one.
+  subscription_alias_enabled                   = false
+  subscription_id                              = {{ subscription.id | tojson }}
+  subscription_display_name                    = {{ subscription.display_name | tojson }}
+  subscription_workload                        = "Production"
+  subscription_update_existing                 = false
+  subscription_management_group_association_enabled = true
+  subscription_management_group_id = "${var.root_id}-{{ management_group }}"
+
+  resource_group_creation_enabled = true
+  resource_groups = {
+    network = {
+      name     = "rg-${var.root_id}-{{ subscription.alias_name }}-connectivity-${var.primary_location}"
+      location = var.primary_location
+    }
+  }
+
+  virtual_network_enabled = true
+  virtual_networks = {
+    spoke = {
+      name                            = "vnet-${var.root_id}-{{ subscription.alias_name }}-${var.primary_location}"
+      address_space                   = [{{ subscription.cidr_block | tojson }}]
+      resource_group_name             = "rg-${var.root_id}-{{ subscription.alias_name }}-connectivity-${var.primary_location}"
+      resource_group_creation_enabled = false
+      resource_group_lock_enabled     = false
+      location                        = var.primary_location
+      hub_peering_enabled             = true
+      hub_network_resource_id         = "/subscriptions/${var.subscription_id_connectivity}/resourceGroups/${var.root_id}-xp-connectivity-${var.primary_location}/providers/Microsoft.Network/virtualNetworks/${var.root_id}-xp-hub-${var.primary_location}"
+      hub_peering_options_tohub = {
+        use_remote_gateways = false
+      }
+      hub_peering_options_fromhub = {
+        allow_gateway_transit = false
+        use_remote_gateways   = false
+      }
+    }
+  }
+}
+{% endfor %}
